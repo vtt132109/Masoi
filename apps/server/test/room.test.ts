@@ -134,7 +134,6 @@ describe('phòng chờ', () => {
       const v = views.find((x) => x.socketId === m.socketId)!.payload as { me: { id: string } };
       expect(v.me.id).toBe(m.id);
     }
-    room.game && room.game.timeline; // trạng thái đầy đủ không bao giờ được gửi
     expect(JSON.stringify(sent)).not.toContain('"seed"');
   });
 });

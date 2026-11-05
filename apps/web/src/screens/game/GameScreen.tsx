@@ -100,9 +100,10 @@ export function GameScreen() {
   const [sheet, setSheet] = useState<'notes' | 'history' | 'menu' | null>(null);
   useWakeLock();
   const load = useNotebook((s) => s.load);
+  const gameId = game?.gameId;
   useEffect(() => {
-    if (game) load(game.gameId);
-  }, [game?.gameId, load]);
+    if (gameId) load(gameId);
+  }, [gameId, load]);
 
   if (!game || !room) return null;
   const head = headerOf(game);

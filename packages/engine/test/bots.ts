@@ -1,4 +1,4 @@
-import { defaultConfig, type GameConfig, type PlayerId } from '@masoi/shared';
+import { defaultConfig, type GameConfig } from '@masoi/shared';
 import { apply, createGame, type Command, type GameState } from '../src';
 import { botCommand, makeRng } from '../src/bot';
 

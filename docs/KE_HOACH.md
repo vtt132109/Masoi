@@ -1,6 +1,6 @@
 # KẾ HOẠCH CHI TIẾT — GAME MA SÓI TRÊN WEB
 
-> Phiên bản tài liệu: 1.1 · Trạng thái: Đã chốt quyết định, sẵn sàng bắt đầu M0
+> Phiên bản tài liệu: 1.2 · Trạng thái: M0–M3 đã hoàn thành — xem mục "Tiến độ thực hiện"
 > Phạm vi: Game Ma Sói nhiều người chơi trên trình duyệt, **không có chat và không có voice trong ứng dụng**.
 
 ---
@@ -26,6 +26,37 @@
 16. [Phụ lục](#16-phụ-lục)
 
 ---
+
+---
+
+## Tiến độ thực hiện (cập nhật mới nhất)
+
+| Mốc | Trạng thái | Ghi chú |
+|---|---|---|
+| M0 Khởi tạo | ✅ Xong | Monorepo pnpm, TS strict, ESLint/Prettier, Vitest, CI, Dockerfile |
+| M1 Engine | ✅ Xong | 6 vai MVP, 54 test (kịch bản + rò rỉ + property với bot + phát lại), độ phủ ~97% |
+| M2 Server | ✅ Xong | Fastify + Socket.IO, phòng, kết nối lại, hẹn giờ, rate limit, bot thử; 22 test gồm ván đầy đủ qua socket thật |
+| M3 Giao diện | ✅ Xong (trừ Storybook, kéo-thả thứ tự ngồi) | Điện thoại + máy tính, đã chơi hết ván bằng Playwright ở 390px và 1440px |
+| E2E | ✅ | 5 trình duyệt giả lập điện thoại chơi hết một ván qua giao diện; bản máy tính; kiểm tra rò vai ở tầng WebSocket |
+| M4 Hoàn thiện | 🟡 Một phần | Theme/âm thanh/Wake Lock/trang luật xong; **chưa** playtest với người thật, Lighthouse, visual regression, thiết bị thật |
+| M5 Beta | ⬜ Chưa | Dockerfile đã viết nhưng **chưa build thử** (môi trường không có Docker daemon); chưa deploy, Sentry, test tải |
+| M6+ | ⬜ Chưa | Vai mở rộng, bỏ phiếu 2 vòng, Redis, v.v. |
+
+### Khác biệt so với kế hoạch ban đầu
+
+- **Hoạt ảnh/âm thanh/thành phần:** dùng CSS animation + Web Audio tổng hợp + sheet tự viết thay cho Framer Motion, Howler.js, Radix (giảm dung lượng và phụ thuộc). JS ban đầu ≈ 158 KB gzip (mục tiêu < 200 KB).
+- **Bot thử** (`ALLOW_BOTS`) được thêm để một người có thể thử luật/giao diện; mặc định tắt ở production.
+- **Thứ tự bước ban đêm:** bước Phù thủy chạy cho mọi ván có vai Phù thủy (kể cả khi Phù thủy đã chết) với thời gian ngẫu nhiên để không lộ qua nhịp thời gian.
+- **Mọi thay đổi trạng thái đều phát view cho TẤT CẢ người chơi cùng lúc** (thay vì debounce 300ms) để không ai đoán vai qua nhịp cập nhật.
+- **Chưa làm:** bỏ phiếu 2 vòng (đề cử → biện hộ), lời dẫn ghi sẵn, bản đồ nghi ngờ, kéo-thả thứ tự ngồi, vai mở rộng (Cupid, Già làng, Thằng ngốc, Kẻ chán đời, Sói con, Bán sói, Kẻ phản bội, Sói nguyền), lưu trữ Redis/PostgreSQL, tài khoản.
+
+### Chưa được kiểm chứng
+
+- Trình duyệt thật ngoài Chromium (Safari iOS, Firefox, Samsung Internet) và thiết bị thật (iPhone SE, Android tầm trung).
+- Hiệu năng/tải (300 phòng đồng thời), Lighthouse, kiểm tra truy cập (a11y) bằng công cụ.
+- Cân bằng vai và độ vui khi chơi với người thật (cần playtest).
+- Build Docker image.
+
 
 ## 0. Tóm tắt
 
@@ -1209,66 +1240,66 @@ Bot ngẫu nhiên (`packages/engine/test/bots`) chọn hành động hợp lệ 
 Ước lượng cho **1 lập trình viên toàn thời gian** (nhân ~0.6 nếu 2 người làm song song frontend/backend).
 
 ### M0 — Khởi tạo (Tuần 1)
-- [ ] Monorepo pnpm, TS config chung, ESLint/Prettier, Vitest, CI cơ bản.
-- [ ] Khung `apps/web` (Vite + React + Tailwind + Router) và `apps/server` (Fastify + Socket.IO).
-- [ ] `packages/shared`: type + schema Zod khởi đầu.
-- [ ] Wireframe cho các màn hình S1–S13 ở **cả điện thoại và máy tính**.
-- [ ] Design tokens (màu đêm/ngày, chữ, khoảng cách, bo góc) + cài font tự host.
-- [ ] Thiết kế chi tiết (Figma) 6 màn hình chính × điện thoại/máy tính × đêm/ngày — duyệt trước khi bắt đầu M3.
-- [ ] Viết `docs/LUAT_CHOI.md` bản người chơi.
+- [x] Monorepo pnpm, TS config chung, ESLint/Prettier, Vitest, CI cơ bản.
+- [x] Khung `apps/web` (Vite + React + Tailwind + Router) và `apps/server` (Fastify + Socket.IO).
+- [x] `packages/shared`: type + schema Zod khởi đầu.
+- [~] Wireframe cho các màn hình S1–S13 ở **cả điện thoại và máy tính**. _(đã có bản mẫu giao diện 5 màn hình; chưa vẽ đủ S1–S13)_
+- [x] Design tokens (màu đêm/ngày, chữ, khoảng cách, bo góc) + cài font tự host.
+- [~] Thiết kế chi tiết (Figma) 6 màn hình chính × điện thoại/máy tính × đêm/ngày — duyệt trước khi bắt đầu M3. _(dùng bản mẫu HTML thay cho Figma)_
+- [~] Viết `docs/LUAT_CHOI.md` bản người chơi. _(luật hiện nằm ở trang Luật trong app; chưa có file riêng)_
 
 **Nghiệm thu:** `pnpm dev` chạy được, CI xanh, client kết nối socket thấy "pong".
 
 ### M1 — Game engine lõi (Tuần 2–3)
-- [ ] `GameState`, `apply`, máy trạng thái pha, RNG có seed.
-- [ ] Vai MVP: Dân làng, Ma sói, Tiên tri, Bảo vệ, Phù thủy, Thợ săn.
-- [ ] Thuật toán giải quyết đêm + lan truyền cái chết + hàng đợi Thợ săn.
-- [ ] Bỏ phiếu 1 vòng + 3 kiểu xử lý hòa.
-- [ ] Điều kiện thắng.
-- [ ] `projectFor` + test chống lộ thông tin.
-- [ ] DSL kịch bản + 20 kịch bản + property test với bot ngẫu nhiên.
-- [ ] Thước cân bằng + gợi ý bộ vai.
+- [x] `GameState`, `apply`, máy trạng thái pha, RNG có seed.
+- [x] Vai MVP: Dân làng, Ma sói, Tiên tri, Bảo vệ, Phù thủy, Thợ săn.
+- [x] Thuật toán giải quyết đêm + lan truyền cái chết + hàng đợi Thợ săn.
+- [x] Bỏ phiếu 1 vòng + 3 kiểu xử lý hòa.
+- [x] Điều kiện thắng.
+- [x] `projectFor` + test chống lộ thông tin.
+- [x] DSL kịch bản + 20 kịch bản + property test với bot ngẫu nhiên.
+- [x] Thước cân bằng + gợi ý bộ vai.
 
 **Nghiệm thu:** Chơi hết 10.000 ván bot ngẫu nhiên không lỗi, mọi bất biến đúng, coverage ≥ 90%.
 
 ### M2 — Server & phòng chơi (Tuần 4)
-- [ ] RoomManager: tạo/vào/rời/kick/chuyển chủ phòng, mã phòng, vòng đời phòng.
-- [ ] Session token + kết nối lại + một người một socket.
-- [ ] GameRunner: nối engine với scheduler (timer), phát `game:view` cho từng người, `game:cue`.
-- [ ] Điều khiển chủ phòng: tạm dừng/tiếp tục/bỏ qua/gia hạn/hủy.
-- [ ] Rate limit, validate Zod, mã lỗi.
-- [ ] Đồng bộ đồng hồ (`time:ping`).
-- [ ] Test tích hợp: 8 client giả chơi hết ván.
+- [x] RoomManager: tạo/vào/rời/kick/chuyển chủ phòng, mã phòng, vòng đời phòng.
+- [x] Session token + kết nối lại + một người một socket.
+- [x] GameRunner: nối engine với scheduler (timer), phát `game:view` cho từng người, `game:cue`.
+- [x] Điều khiển chủ phòng: tạm dừng/tiếp tục/bỏ qua/gia hạn/hủy.
+- [x] Rate limit, validate Zod, mã lỗi.
+- [x] Đồng bộ đồng hồ (`time:ping`).
+- [x] Test tích hợp: 8 client giả chơi hết ván.
 
 **Nghiệm thu:** Có thể chơi trọn một ván bằng script client giả; rút mạng 1 client rồi kết nối lại vẫn tiếp tục đúng.
 
 ### M3 — Giao diện web (Tuần 5–6)
-- [ ] Trang chủ, nhập tên, vào phòng (mã, link, QR).
-- [ ] Phòng chờ + bảng cấu hình chủ phòng + preset.
-- [ ] Chọn chế độ chơi (Cùng phòng / Từ xa), ô dán link cuộc gọi, chọn thiết bị "loa chung", kéo-thả thứ tự ngồi.
-- [ ] Xem vai (giữ để lật).
-- [ ] Màn hình đêm cho từng vai + nhiệm vụ giả + khán giả.
-- [ ] Bình minh, Thợ săn, Thảo luận (tự do + theo lượt + giơ tay), Bỏ phiếu, Kết quả phiếu, Xử tử.
-- [ ] Màn hình kết thúc + dòng thời gian.
-- [ ] Sổ tay cá nhân.
-- [ ] Bảng điều khiển chủ phòng.
-- [ ] Banner mất kết nối / đang kết nối lại.
-- [ ] Chế độ dev: 1 người + bot.
+- [x] Trang chủ, nhập tên, vào phòng (mã, link, QR).
+- [x] Phòng chờ + bảng cấu hình chủ phòng + preset.
+- [~] Chọn chế độ chơi (Cùng phòng / Từ xa), ô dán link cuộc gọi, chọn thiết bị "loa chung", kéo-thả thứ tự ngồi. _(xong, trừ kéo-thả thứ tự ngồi: hiện theo thứ tự vào phòng)_
+- [x] Xem vai (giữ để lật).
+- [x] Màn hình đêm cho từng vai + nhiệm vụ giả + khán giả.
+- [x] Bình minh, Thợ săn, Thảo luận (tự do + theo lượt + giơ tay), Bỏ phiếu, Kết quả phiếu, Xử tử.
+- [x] Màn hình kết thúc + dòng thời gian.
+- [x] Sổ tay cá nhân.
+- [x] Bảng điều khiển chủ phòng.
+- [x] Banner mất kết nối / đang kết nối lại.
+- [x] Chế độ dev: 1 người + bot.
 
-- [ ] Thư viện thành phần (mục 4.6.6) trong Storybook.
-- [ ] Bố cục điện thoại (lưới + thanh hành động + bottom sheet) và máy tính (3 cột + vòng tròn người chơi + phím tắt) cho mọi màn hình.
+- [ ] Thư viện thành phần (mục 4.6.6) trong Storybook. _(chưa làm; thành phần đã có nhưng chưa có Storybook)_
+- [x] Bố cục điện thoại (lưới + thanh hành động + bottom sheet) và máy tính (3 cột + vòng tròn người chơi + phím tắt) cho mọi màn hình.
 
 **Nghiệm thu:** E2E Playwright 6 người chơi hết ván trên viewport điện thoại **và** máy tính; tất cả màn hình dùng được một tay trên điện thoại và bằng bàn phím trên máy tính; giao diện khớp bản thiết kế đã duyệt.
 
 ### M4 — Hoàn thiện & playtest nội bộ (Tuần 7)
-- [ ] Theme ngày/đêm, hiệu ứng chuyển cảnh, lật bài.
-- [ ] Âm thanh + (tùy chọn) lời dẫn ghi sẵn; phát theo chế độ chơi (loa chung / mọi thiết bị).
+- [x] Theme ngày/đêm, hiệu ứng chuyển cảnh, lật bài.
+- [~] Âm thanh + (tùy chọn) lời dẫn ghi sẵn; phát theo chế độ chơi (loa chung / mọi thiết bị). _(xong phần hiệu ứng tổng hợp + phát theo chế độ; chưa có lời dẫn ghi sẵn)_
 - [ ] Playtest **cả hai chế độ**: ít nhất 2 buổi cùng phòng và 2 buổi từ xa qua Discord/Zalo.
-- [ ] Trang Luật chơi trong app.
-- [ ] PWA (thêm vào màn hình chính, toàn màn hình, giữ màn hình sáng bằng Wake Lock API).
+- [x] Trang Luật chơi trong app.
+- [~] PWA (thêm vào màn hình chính, toàn màn hình, giữ màn hình sáng bằng Wake Lock API). _(có manifest + Wake Lock; chưa có service worker/offline)_
 - [ ] 3–5 buổi playtest, sửa lỗi UX, chỉnh thời gian mặc định.
 
-- [ ] Minh họa nền làng nhiều lớp, avatar, lá bài vai hoàn chỉnh.
+- [~] Minh họa nền làng nhiều lớp, avatar, lá bài vai hoàn chỉnh. _(nền làng + avatar icon + lá bài icon đã có; chưa có minh họa vẽ tay hoàn chỉnh)_
 - [ ] Visual regression (375 / 768 / 1440px), thử trên thiết bị thật theo mục 4.8, Lighthouse Mobile ≥ 90.
 
 **Nghiệm thu:** Nhóm 8 người chơi 3 ván liên tiếp không cần hướng dẫn thêm, không lỗi chặn; người chơi đánh giá giao diện ≥ 4/5 trên cả điện thoại và máy tính.
