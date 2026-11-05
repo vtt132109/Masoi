@@ -1,6 +1,6 @@
 # KẾ HOẠCH CHI TIẾT — GAME MA SÓI TRÊN WEB
 
-> Phiên bản tài liệu: 1.0 · Trạng thái: Bản nháp để chốt
+> Phiên bản tài liệu: 1.1 · Trạng thái: Đã chốt quyết định, sẵn sàng bắt đầu M0
 > Phạm vi: Game Ma Sói nhiều người chơi trên trình duyệt, **không có chat và không có voice trong ứng dụng**.
 
 ---
@@ -53,7 +53,7 @@ App hỗ trợ thảo luận bằng các công cụ **không phải chat**: đ�
 | Nhóm | Tính năng |
 |---|---|
 | Phòng chơi | Tạo phòng, mã phòng 5 ký tự, link + QR mời, vào phòng bằng nickname, đổi avatar, sẵn sàng, chủ phòng kick/chuyển quyền |
-| Cấu hình | Chọn bộ vai, số lượng mỗi vai, gợi ý bộ vai theo số người, thước đo cân bằng, thời gian từng pha, các luật tùy chọn |
+| Cấu hình | Chọn chế độ chơi (Cùng phòng / Từ xa), link cuộc gọi ngoài (chế độ Từ xa), chọn bộ vai, số lượng mỗi vai, gợi ý bộ vai theo số người, thước đo cân bằng, thời gian từng pha, các luật tùy chọn |
 | Gameplay | Chia vai ngẫu nhiên, xem vai bí mật, đêm/ngày tự động, hành động đêm, công bố người chết, thảo luận có đếm giờ, bỏ phiếu, xử tử, kích hoạt kỹ năng khi chết, kiểm tra thắng thua |
 | Hỗ trợ thảo luận (không chat) | Đếm giờ thảo luận, thảo luận theo lượt, giơ tay xin nói, "sẵn sàng bỏ phiếu", ghi chú/đánh dấu nghi ngờ cá nhân |
 | Sau ván | Màn hình kết quả, lật toàn bộ vai, dòng thời gian ván đấu, chơi lại cùng phòng |
@@ -70,22 +70,37 @@ App hỗ trợ thảo luận bằng các công cụ **không phải chat**: đ�
 
 ---
 
-## 2. Giả định và các quyết định cần chốt
+## 2. Các quyết định đã chốt
 
-Các mục dưới đây đã có **lựa chọn mặc định** để bắt đầu làm ngay; có thể đổi trước khi vào milestone tương ứng.
+Tất cả các quyết định dưới đây **đã chốt** (D1, D5, D6 do chủ dự án chọn; các mục còn lại theo mặc định đề xuất).
 
-| # | Câu hỏi | Mặc định đề xuất | Phương án khác |
+| # | Câu hỏi | Quyết định | Ghi chú |
 |---|---|---|---|
-| D1 | Bối cảnh chơi chính | Cùng phòng, mỗi người 1 thiết bị | Từ xa qua voice ngoài (vẫn hỗ trợ) |
-| D2 | Có quản trò người thật không? | Không — app là quản trò | Thêm "chế độ quản trò" (người host chỉ điều khiển, không chơi) ở giai đoạn sau |
-| D3 | Tài khoản | Không cần, nickname + token ẩn danh | Đăng nhập Google ở giai đoạn sau |
-| D4 | Số người mỗi phòng | 5–20 | 4–24 |
-| D5 | Sói bàn bạc thế nào khi không có chat? | Mỗi Sói chọn mục tiêu, các Sói khác thấy lựa chọn của nhau theo thời gian thực, đa số thắng | Chỉ Sói đầu đàn quyết định |
-| D6 | Người chết có xem được toàn bộ vai không? | Có (tùy chọn, mặc định bật) | Tắt khi chơi cùng phòng nếu sợ lộ qua nét mặt |
-| D7 | Công bố vai của người chết | Có | Không công bố (khó hơn) |
-| D8 | Ngôn ngữ | Tiếng Việt | Thêm tiếng Anh (cấu trúc i18n có sẵn từ đầu) |
-| D9 | Tiền tệ hóa | Không | Quảng cáo/skin — không nằm trong kế hoạch này |
-| D10 | Hình minh họa lá bài | Tự vẽ/đặt vẽ minh họa gốc, MVP dùng icon + màu | — |
+| D1 | Bối cảnh chơi | ✅ **Hỗ trợ cả hai: Cùng phòng và Từ xa** — chủ phòng chọn chế độ trong phòng chờ | Xem mục 2.1 |
+| D2 | Có quản trò người thật không? | ✅ Không — app là quản trò | "Chế độ quản trò" để ở giai đoạn sau (M7) |
+| D3 | Tài khoản | ✅ Không cần, nickname + token ẩn danh | Đăng nhập Google ở giai đoạn sau |
+| D4 | Số người mỗi phòng | ✅ 5–20 | |
+| D5 | Sói thống nhất mục tiêu thế nào khi không có chat? | ✅ **Bỏ phiếu**: mỗi Sói chọn mục tiêu, các Sói khác thấy lựa chọn của nhau theo thời gian thực, đa số thắng, hòa → ngẫu nhiên trong nhóm hòa | Không có Sói đầu đàn quyết định |
+| D6 | Người chết có xem được toàn bộ vai không? | ✅ **Không** — người chết chỉ thấy vai của mình và thông tin công khai | Áp dụng cho cả hai chế độ chơi |
+| D7 | Công bố vai của người chết | ✅ Có | |
+| D8 | Ngôn ngữ | ✅ Tiếng Việt | Cấu trúc i18n có sẵn từ đầu để thêm tiếng Anh sau |
+| D9 | Tiền tệ hóa | ✅ Không | |
+| D10 | Hình minh họa lá bài | ✅ Minh họa gốc; MVP dùng icon + màu | |
+| D11 | Luật chơi mặc định | ✅ Toàn bộ giá trị mặc định ở mục 3.9 | Chủ phòng vẫn chỉnh được từng ván |
+
+### 2.1 Hai chế độ chơi
+
+Chế độ chơi **không thay đổi luật**, chỉ thay đổi cách app hỗ trợ việc thảo luận và âm thanh. Chủ phòng chọn trong phòng chờ (mặc định: Cùng phòng), đổi được trước khi bắt đầu ván.
+
+| Khía cạnh | 🏠 Cùng phòng (`IN_PERSON`) | 🌐 Từ xa (`REMOTE`) |
+|---|---|---|
+| Thảo luận | Nói chuyện trực tiếp | Qua cuộc gọi bên ngoài (Discord, Zalo, Google Meet…) |
+| Link cuộc gọi | Ẩn | Chủ phòng dán link cuộc gọi (chỉ `https://`) → hiện ở phòng chờ và nút "Mở cuộc gọi" trong ván. Đây chỉ là một đường link, app không có voice |
+| Âm thanh & lời dẫn | Phát trên **một thiết bị "loa chung"** (mặc định là máy chủ phòng, đổi được); các máy khác chỉ rung nhẹ, để cả phòng không bị ồn lệch nhau | Phát trên **mọi thiết bị** |
+| Thứ tự ngồi (dùng cho thảo luận theo lượt) | Chủ phòng kéo-thả sắp xếp theo vị trí ngồi thật | Theo thứ tự vào phòng (chủ phòng vẫn sắp xếp lại được) |
+| Nhắc nhở trước ván | "Đặt điện thoại úp xuống / giảm độ sáng ban đêm" | "Hãy vào cuộc gọi và tắt mic khi trời tối nếu muốn" |
+| Chống lộ vai (mục 4.3) | Bật đầy đủ | Bật đầy đủ (vô hại, và giúp chống đoán vai qua thời gian) |
+| Mất kết nối | Ít xảy ra | Hiện rõ hơn: icon mất kết nối + thời gian mất kết nối trên danh sách người chơi |
 
 ---
 
@@ -257,6 +272,9 @@ Hiển thị: "Nghiêng về Dân ◀━━●━━▶ Nghiêng về Sói".
 
 ```ts
 type GameConfig = {
+  playMode: 'IN_PERSON' | 'REMOTE',     // mặc định IN_PERSON — xem mục 2.1
+  voiceCallUrl: string | null,          // chỉ dùng ở REMOTE, bắt buộc https://
+  speakerDeviceId: PlayerId | null,     // thiết bị "loa chung" ở IN_PERSON (null = chủ phòng)
   roles: Record<RoleId, number>;
   timers: {
     roleReveal: 15, nightMain: 30, witch: 20, cupid: 25,
@@ -266,7 +284,7 @@ type GameConfig = {
   };
   rules: {
     revealRoleOnDeath: true,
-    deadSeeAllRoles: true,
+    deadSeeAllRoles: false,             // đã chốt D6: người chết KHÔNG xem toàn bộ vai
     tieBreak: 'NO_LYNCH' | 'REVOTE' | 'RANDOM',
     voteMode: 'SINGLE' | 'NOMINATE_DEFEND',
     discussionMode: 'FREE' | 'TURNS',
@@ -315,7 +333,7 @@ Phòng chờ → (chủ phòng bấm Bắt đầu) → Xem vai → Vòng chơi �
 | S1 | **Trang chủ** | Logo, nút Tạo phòng / Vào phòng, link Luật chơi, Cài đặt (âm thanh, ngôn ngữ) | Nếu có phiên đang dở → banner "Quay lại phòng ABCDE" |
 | S2 | **Nhập tên** | Nickname (2–16 ký tự, có dấu tiếng Việt), chọn avatar (bộ 24 avatar gốc), màu | Nhớ trong localStorage |
 | S3 | **Vào phòng** | 5 ô nhập mã, nút quét QR (camera) | Mã chỉ gồm chữ dễ đọc |
-| S4 | **Phòng chờ** | Mã phòng to + QR + nút Copy link; danh sách người chơi (avatar, tên, vương miện chủ phòng, trạng thái sẵn sàng/mất kết nối); nút Sẵn sàng | Người chơi thường xem cấu hình ở chế độ chỉ đọc |
+| S4 | **Phòng chờ** | Mã phòng to + QR + nút Copy link; nhãn chế độ chơi (🏠 Cùng phòng / 🌐 Từ xa); ở chế độ Từ xa: nút "Mở cuộc gọi" nếu chủ phòng đã dán link; danh sách người chơi (avatar, tên, vương miện chủ phòng, trạng thái sẵn sàng/mất kết nối); nút Sẵn sàng | Người chơi thường xem cấu hình ở chế độ chỉ đọc |
 | S4a | **Cấu hình (chủ phòng)** | Tab Vai trò (bộ đếm +/− cho từng vai, nút "Gợi ý theo số người", thước cân bằng), tab Thời gian, tab Luật, chọn preset | Cảnh báo nếu tổng vai ≠ số người, nếu 0 Sói, nếu Sói ≥ dân |
 | S5 | **Xem vai** | Lá bài úp, **giữ để lật** (nhả ra là úp lại), tên vai, mô tả ngắn, phe, đồng đội (Sói thấy Sói khác; Kẻ phản bội thấy Sói); nút "Đã hiểu" | Đếm số người đã xem: "6/8 đã xem" |
 | S6 | **Đêm** | Nền tối, trăng, đồng hồ đếm ngược chung. Phần hành động theo vai (xem 4.3). Nút "Xem lại vai" (giữ để xem) | Mọi người có bố cục giống hệt nhau |
@@ -325,7 +343,7 @@ Phòng chờ → (chủ phòng bấm Bắt đầu) → Xem vai → Vòng chơi �
 | S6d | Đêm – Phù thủy | "Đêm nay Sói cắn: **An**" + nút Cứu (nếu còn), lưới chọn người để đầu độc (nếu còn), nút "Không làm gì" | Hiện số bình còn lại |
 | S6e | Đêm – Cupid | Chọn 2 người | Chỉ đêm 1 |
 | S6f | Đêm – Dân làng | Nhiệm vụ giả: "Bạn nghi ai nhất?" chọn 1 người | Đảm bảo ai cũng phải chạm màn hình |
-| S6g | Đêm – Người chết | Chế độ khán giả: xem toàn bộ vai và lựa chọn đêm (nếu bật) | |
+| S6g | Đêm – Người chết | Chế độ khán giả: "Bạn đã chết — hãy giữ im lặng". Chỉ thấy vai của mình, vai đã được công bố và thông tin công khai. **Không** thấy vai người còn sống hay lựa chọn ban đêm | Vẫn có màn hình đêm giống mọi người |
 | S7 | **Bình minh** | Hiệu ứng mặt trời mọc; danh sách người chết + vai đã lật; hoặc "Đêm qua bình yên" | Thông báo riêng: "Bạn đã bị nguyền, giờ bạn là Sói" |
 | S8 | **Thợ săn bắn** | Thợ săn: lưới chọn người + "Không bắn". Người khác: "Thợ săn đang ngắm…" | |
 | S9 | **Thảo luận** | Đồng hồ lớn, danh sách người còn sống/chết, nút Giơ tay, hàng đợi phát biểu, nút "Sẵn sàng bỏ phiếu" (x/y), sổ tay cá nhân | Chế độ lượt: hiển thị người đang nói |
@@ -363,7 +381,8 @@ Phòng chờ → (chủ phòng bấm Bắt đầu) → Xem vai → Vòng chơi �
 ### 4.5 Âm thanh và hiệu ứng
 
 - Hiệu ứng: tiếng sói hú khi vào đêm, gà gáy khi bình minh, tiếng chuông khi bỏ phiếu, tiếng trống khi xử tử, tích tắc 10s cuối.
-- **Lời dẫn đọc sẵn (narration)** — tùy chọn: file âm thanh ghi sẵn "Trời tối, mọi người nhắm mắt…" phát trên **thiết bị chủ phòng** (hoặc chọn một thiết bị "loa chung"). Đây là âm thanh dẫn truyện, không phải voice chat.
+- **Lời dẫn đọc sẵn (narration)** — tùy chọn: file âm thanh ghi sẵn "Trời tối, mọi người nhắm mắt…". Đây là âm thanh dẫn truyện, không phải voice chat.
+- **Nơi phát âm thanh theo chế độ chơi** (mục 2.1): *Cùng phòng* → chỉ phát trên thiết bị "loa chung" (mặc định máy chủ phòng), máy khác rung nhẹ; *Từ xa* → phát trên mọi thiết bị.
 - Nút tắt âm toàn cục; tôn trọng chế độ im lặng.
 - Hiệu ứng chuyển cảnh ngày/đêm (fade + đổi palette) 1–1.5s, tắt được (`prefers-reduced-motion`).
 
@@ -591,7 +610,7 @@ stateDiagram-v2
 | Thông tin | Ai được thấy |
 |---|---|
 | Vai của mình | Bản thân |
-| Danh sách Sói | Sói, Kẻ phản bội (một chiều), người chết (nếu bật), mọi người khi kết thúc |
+| Danh sách Sói | Sói, Kẻ phản bội (một chiều), mọi người khi kết thúc. **Người chết không được thấy** (D6) — Sói đã chết vẫn nhớ đồng đội cũ nhưng không thấy lựa chọn đêm mới |
 | Lựa chọn đêm của từng Sói | Các Sói còn sống |
 | Mục tiêu Sói đêm nay | Phù thủy (trong bước N2) |
 | Kết quả soi | Tiên tri (lịch sử của chính mình) |
@@ -842,6 +861,7 @@ Client hiển thị thông báo thân thiện tiếng Việt cho từng mã.
 | Chiếm phiên người khác | Token 128-bit, chỉ lưu hash trên server; không đưa token lên URL |
 | Dò mã phòng | Mã 5 ký tự (24⁵ ≈ 8 triệu); giới hạn 10 lần vào phòng sai/phút/IP |
 | Spam/DoS | Rate limit theo socket (ví dụ 20 lệnh/giây), giới hạn kích thước payload 4KB, giới hạn số phòng tạo/IP/giờ |
+| Link cuộc gọi độc hại (chế độ Từ xa) | Chỉ chủ phòng được đặt; bắt buộc `https://`, dài tối đa 300 ký tự; hiển thị rõ tên miền trước khi mở; mở tab mới với `rel="noopener noreferrer"` |
 | Nickname phản cảm / XSS | Giới hạn ký tự, lọc từ cấm cơ bản; React tự escape, không dùng `dangerouslySetInnerHTML` |
 | Ngẫu nhiên có thể đoán | Seed sinh bằng `crypto.randomInt`, chỉ lộ sau khi kết thúc |
 | Gian lận ngoài đời (nhìn trộm) | Các biện pháp ở mục 4.3 |
@@ -905,6 +925,8 @@ Mỗi mục dưới đây cần ít nhất **một test** trong engine.
 **Kết nối & điều khiển**
 39. Chủ phòng mất kết nối giữa ván → chuyển quyền chủ phòng, ván tiếp tục.
 40. Tất cả mất kết nối > 10 phút → hủy phòng.
+46. Người chết (kể cả Sói đã chết) mở lại trang/kết nối lại → vẫn không nhận được vai người còn sống hay lựa chọn ban đêm (D6).
+47. Đổi chế độ chơi từ Từ xa sang Cùng phòng → link cuộc gọi bị ẩn; thiết bị "loa chung" rời phòng → tự chuyển về máy chủ phòng.
 41. Người chơi mở 2 tab → tab cũ nhận `session:replaced`.
 42. Server khởi động lại (GĐ2) → khôi phục từ Redis, tính lại deadline.
 43. Đồng hồ điện thoại sai lệch vài phút → đồng hồ hiển thị vẫn đúng nhờ offset.
@@ -922,7 +944,7 @@ Mỗi mục dưới đây cần ít nhất **một test** trong engine.
 | Unit – engine | Vitest | Mỗi vai, mỗi pha, thuật toán giải quyết đêm, điều kiện thắng, toàn bộ edge case mục 9 | Coverage engine ≥ 90% |
 | Kịch bản (scenario) | Vitest + DSL | Viết ván đấu như kịch bản đọc được (xem bên dưới) | 30+ kịch bản |
 | Property-based | fast-check | Sinh ngẫu nhiên bộ vai + hành động bot hàng nghìn ván | Không vi phạm bất biến |
-| Projection | Vitest | Mọi PlayerView không chứa thông tin cấm | 100% vai |
+| Projection | Vitest | Mọi PlayerView không chứa thông tin cấm, **kể cả view của người đã chết** (D6) | 100% vai |
 | Tích hợp server | Vitest + socket.io-client | Tạo phòng, vào phòng, chơi hết 1 ván với 8 client giả, kết nối lại | |
 | E2E | Playwright | 6 browser context song song chơi hết 1 ván; kiểm tra UI mobile (viewport iPhone/Android) | Chạy trên CI |
 | Tải | Artillery hoặc k6 + bot | 300 phòng × 10 bot cùng lúc | p95 độ trễ < 150ms, không rò bộ nhớ |
@@ -1031,6 +1053,7 @@ Bot ngẫu nhiên (`packages/engine/test/bots`) chọn hành động hợp lệ 
 ### M3 — Giao diện web (Tuần 5–6)
 - [ ] Trang chủ, nhập tên, vào phòng (mã, link, QR).
 - [ ] Phòng chờ + bảng cấu hình chủ phòng + preset.
+- [ ] Chọn chế độ chơi (Cùng phòng / Từ xa), ô dán link cuộc gọi, chọn thiết bị "loa chung", kéo-thả thứ tự ngồi.
 - [ ] Xem vai (giữ để lật).
 - [ ] Màn hình đêm cho từng vai + nhiệm vụ giả + khán giả.
 - [ ] Bình minh, Thợ săn, Thảo luận (tự do + theo lượt + giơ tay), Bỏ phiếu, Kết quả phiếu, Xử tử.
@@ -1044,7 +1067,8 @@ Bot ngẫu nhiên (`packages/engine/test/bots`) chọn hành động hợp lệ 
 
 ### M4 — Hoàn thiện & playtest nội bộ (Tuần 7)
 - [ ] Theme ngày/đêm, hiệu ứng chuyển cảnh, lật bài.
-- [ ] Âm thanh + (tùy chọn) lời dẫn ghi sẵn trên thiết bị chủ phòng.
+- [ ] Âm thanh + (tùy chọn) lời dẫn ghi sẵn; phát theo chế độ chơi (loa chung / mọi thiết bị).
+- [ ] Playtest **cả hai chế độ**: ít nhất 2 buổi cùng phòng và 2 buổi từ xa qua Discord/Zalo.
 - [ ] Trang Luật chơi trong app.
 - [ ] PWA (thêm vào màn hình chính, toàn màn hình, giữ màn hình sáng bằng Wake Lock API).
 - [ ] 3–5 buổi playtest, sửa lỗi UX, chỉnh thời gian mặc định.
@@ -1161,7 +1185,7 @@ Người chơi: An (Sói), Bình (Sói), Chi (Tiên tri), Dũng (Bảo vệ), Em
 
 ### 16.3 Danh sách việc cần làm ngay (bước tiếp theo)
 
-1. Chốt các quyết định ở mục 2 (đặc biệt D1, D5, D6).
-2. Chốt danh sách vai MVP và luật mặc định ở mục 3.9.
+1. ~~Chốt các quyết định ở mục 2~~ — đã chốt.
+2. ~~Chốt danh sách vai MVP và luật mặc định ở mục 3.9~~ — dùng mặc định.
 3. Bắt đầu M0: khởi tạo monorepo và CI.
 4. Song song: vẽ wireframe phòng chờ, màn hình đêm, màn hình bỏ phiếu — 3 màn hình quan trọng nhất.
