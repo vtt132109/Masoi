@@ -57,12 +57,16 @@ export const ClientEvents = {
   roomUpdateConfig: 'room:updateConfig',
   roomKick: 'room:kick',
   roomTransferHost: 'room:transferHost',
+  roomAddBot: 'room:addBot',
+  roomRemoveBot: 'room:removeBot',
   gameStart: 'game:start',
   gameAckRole: 'game:ackRole',
   gameAction: 'game:action',
   gameHost: 'game:host',
   gameBackToLobby: 'game:backToLobby',
 } as const;
+
+export type ClientEventName = (typeof ClientEvents)[keyof typeof ClientEvents];
 
 export const ClientPayloads = {
   [ClientEvents.sessionResume]: z.object({
@@ -82,9 +86,15 @@ export const ClientPayloads = {
     nickname: NicknameSchema.optional(),
     avatar: AvatarSchema.optional(),
   }),
-  [ClientEvents.roomUpdateConfig]: z.object({ patch: GameConfigPatchSchema }),
+  [ClientEvents.roomUpdateConfig]: z.object({
+    patch: GameConfigPatchSchema,
+    /** Bật lại chế độ tự gợi ý bộ vai theo số người. */
+    autoRoles: z.boolean().optional(),
+  }),
   [ClientEvents.roomKick]: z.object({ playerId: PlayerIdSchema }),
   [ClientEvents.roomTransferHost]: z.object({ playerId: PlayerIdSchema }),
+  [ClientEvents.roomAddBot]: z.object({}),
+  [ClientEvents.roomRemoveBot]: z.object({ playerId: PlayerIdSchema }),
   [ClientEvents.gameStart]: z.object({}),
   [ClientEvents.gameAckRole]: z.object({ phaseSeq: z.number().int() }),
   [ClientEvents.gameAction]: z.object({ phaseSeq: z.number().int(), action: GameActionSchema }),
@@ -112,6 +122,11 @@ export interface MemberView {
   connected: boolean;
   ready: boolean;
   isHost: boolean;
+  isBot: boolean;
+  /** Đã rời phòng giữa ván (vẫn nằm trong ván đang chơi cho đến khi kết thúc). */
+  left: boolean;
+  /** Mốc mất kết nối (epoch ms), null nếu đang kết nối. */
+  disconnectedAt: number | null;
 }
 
 export interface RoomView {
@@ -120,6 +135,9 @@ export interface RoomView {
   status: 'LOBBY' | 'IN_GAME';
   members: MemberView[];
   config: GameConfig;
+  /** Bộ vai đang tự gợi ý theo số người. */
+  autoRoles: boolean;
+  allowBots: boolean;
   /** Thiết bị phát âm thanh chung ở chế độ Cùng phòng (đã quy về chủ phòng nếu chưa chọn). */
   speakerId: PlayerId;
 }
@@ -151,6 +169,7 @@ export const ErrorCodes = [
   'INVALID_CONFIG',
   'NOT_ENOUGH_PLAYERS',
   'NOT_READY',
+  'BOTS_DISABLED',
   'NO_GAME',
   'NOT_YOUR_TURN',
   'STALE_PHASE',

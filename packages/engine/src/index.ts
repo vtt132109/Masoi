@@ -3,6 +3,7 @@ export { createGame, type CreateGameInput } from './create';
 export { apply } from './reducer';
 export { projectFor } from './projection';
 export { checkWin } from './phases';
+export { botCommand, makeRng } from './bot';
 
 import type { GameState } from './state';
 
