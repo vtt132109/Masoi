@@ -41,7 +41,7 @@ App hỗ trợ thảo luận bằng các công cụ **không phải chat**: đ�
 1. **Server quyết định tất cả** (server-authoritative). Client chỉ hiển thị và gửi ý định.
 2. **Mỗi người chỉ nhận đúng thông tin mình được biết** — không bao giờ gửi vai của người khác xuống client.
 3. **Game engine là code thuần** (không I/O, không mạng) → test dễ, phát lại được ván đấu.
-4. **Mobile-first**, thao tác một tay, chữ to, chống nhìn trộm màn hình.
+4. **Giao diện đẹp trên cả điện thoại và máy tính**: mobile-first, thao tác một tay, chống nhìn trộm màn hình trên điện thoại; bố cục 3 cột, hover, phím tắt trên máy tính (mục 4.6–4.8).
 5. **Vai trò dạng plugin** → thêm vai mới không phải sửa lõi.
 
 ---
@@ -386,16 +386,203 @@ Phòng chờ → (chủ phòng bấm Bắt đầu) → Xem vai → Vòng chơi �
 - Nút tắt âm toàn cục; tôn trọng chế độ im lặng.
 - Hiệu ứng chuyển cảnh ngày/đêm (fade + đổi palette) 1–1.5s, tắt được (`prefers-reduced-motion`).
 
-### 4.6 Định hướng hình ảnh
+### 4.6 Hệ thống thiết kế (Design system)
 
-- **Đêm:** xanh đêm đậm (#0f172a), tím than, trăng vàng nhạt, chữ trắng ngà.
-- **Ngày:** be ấm, cam đất, xanh lá cây nhạt.
-- **Phông:** "Be Vietnam Pro" (hỗ trợ tiếng Việt tốt) cho nội dung, một phông có chân cho tiêu đề.
-- **Lá bài vai:** minh họa gốc (tự vẽ/đặt vẽ), mỗi phe một màu viền. MVP dùng icon SVG + màu.
-- **Avatar:** bộ 24 avatar gốc (động vật/dân làng cách điệu).
-- Thành phần UI: nút lớn ≥ 48px, lưới người chơi 3–4 cột trên điện thoại.
+> **Yêu cầu chốt:** giao diện phải **đẹp và được thiết kế riêng cho cả điện thoại lẫn máy tính** — không phải bản điện thoại kéo giãn ra màn hình lớn, cũng không phải bản máy tính thu nhỏ lại.
 
-### 4.7 Khả năng tiếp cận và đa ngôn ngữ
+**Phong cách tổng thể:** "Làng cổ dưới ánh trăng" — cổ tích, ấm cúng nhưng hồi hộp. Nền là tranh minh họa nhiều lớp (bầu trời, đồi, mái nhà làng, sương mù), giao diện nổi lên trên dạng thẻ bo góc mềm, phát sáng nhẹ ban đêm. Tránh phong cách "bảng điều khiển công sở".
+
+#### 4.6.1 Màu sắc (design tokens)
+
+Toàn bộ màu khai báo bằng CSS variables; app đổi bộ màu theo **pha** (đêm/ngày) chứ không theo cài đặt sáng/tối của hệ điều hành.
+
+| Token | 🌙 Đêm | ☀️ Ngày | Dùng cho |
+|---|---|---|---|
+| `--bg` | `#0B1020` | `#F6EFE3` | Nền trang |
+| `--surface` | `#141B2E` | `#FFF9F0` | Thẻ, bảng |
+| `--surface-raised` | `#1C2540` | `#FFFFFF` | Thẻ nổi, sheet, modal |
+| `--border` | `#2A3556` | `#E6D9C3` | Viền |
+| `--text` | `#EDE7D9` | `#2B2118` | Chữ chính |
+| `--text-muted` | `#9AA3B8` | `#7A6A58` | Chữ phụ |
+| `--accent` | `#F2D27A` (ánh trăng) | `#9C5410` (nắng) | Nút chính, đồng hồ, chọn |
+| `--team-village` | `#4FB58A` | `#1F7350` | Phe Dân |
+| `--team-wolf` | `#E05A64` | `#B3323C` | Phe Sói, cảnh báo nguy hiểm |
+| `--team-neutral` | `#A98BE0` | `#7A5BB8` | Phe độc lập |
+| `--lovers` | `#E98AB4` | `#A83A68` | Cặp đôi |
+| `--dead` | `#5B6275` | `#B9AE9E` | Người đã chết (kèm biểu tượng 💀, không chỉ dùng màu) |
+
+Mọi cặp chữ/nền phải đạt tương phản **WCAG AA** (≥ 4.5:1 cho chữ thường) — kiểm bằng script trong CI.
+
+#### 4.6.2 Chữ (typography)
+
+- **Nội dung:** *Be Vietnam Pro* (400/500/600/700) — sinh ra cho tiếng Việt, dấu không bị đè dòng.
+- **Tiêu đề & tên vai:** *Playfair Display* (hỗ trợ tiếng Việt) — tạo chất cổ tích.
+- **Số đồng hồ:** Be Vietnam Pro với `font-variant-numeric: tabular-nums` (số không nhảy khi đếm).
+- Chỉ tải subset `vietnamese` + `latin`, `font-display: swap`, tự host font (không phụ thuộc mạng ngoài).
+- Thang cỡ chữ co giãn theo màn hình bằng `clamp()`:
+
+| Cấp | Điện thoại | Máy tính | Dùng cho |
+|---|---|---|---|
+| Display | 40px | 64px | Tên phe thắng, "Trời đã sáng" |
+| H1 | 28px | 40px | Tên pha, tên vai |
+| H2 | 22px | 28px | Tiêu đề khối |
+| Body | 16px | 16px | Nội dung (không bao giờ < 16px trên điện thoại để iOS không tự phóng to ô nhập) |
+| Small | 13px | 14px | Chú thích |
+| Timer | 48px | 72px | Đồng hồ đếm ngược |
+
+#### 4.6.3 Khoảng cách, bo góc, đổ bóng
+
+- Lưới **4px**: khoảng cách 4/8/12/16/24/32/48/64.
+- Bo góc: 10px (nút, ô nhập), 16px (thẻ người chơi), 24px (sheet, modal, lá bài vai).
+- Đổ bóng ban ngày: bóng mềm màu nâu nhạt. Ban đêm: thay bóng bằng **viền sáng mờ** (`box-shadow` màu `--accent` độ mờ thấp) — trông như ánh trăng.
+
+#### 4.6.4 Chuyển động (motion)
+
+| Hiệu ứng | Thời lượng | Mô tả |
+|---|---|---|
+| Phản hồi chạm/hover | 120–150ms | Nút lún nhẹ (`scale(0.97)`), thẻ nhấc lên khi hover |
+| Chọn người chơi | 200ms | Viền màu accent chạy quanh thẻ + dấu tích |
+| Mở sheet / panel | 250–300ms | Trượt lên (điện thoại) / trượt ngang (máy tính), easing spring |
+| Lật lá bài vai | 500ms | Lật 3D quanh trục dọc |
+| Chuyển ngày ↔ đêm | 1200ms | Bầu trời đổi gradient, trăng lặn/mặt trời mọc, sao mờ dần, màu giao diện nội suy |
+| Công bố người chết | 800ms | Thẻ chuyển xám, nứt nhẹ, hiện vai |
+| Kết quả phiếu | 600ms | Thanh phiếu mọc dần theo thứ tự |
+| 10 giây cuối | lặp | Vòng đồng hồ đập nhẹ, chuyển sang màu `--team-wolf` |
+
+- Chỉ animate `transform` và `opacity` để luôn đạt 60fps trên điện thoại tầm trung.
+- `prefers-reduced-motion` → thay mọi hiệu ứng bằng fade 150ms.
+- Thiết bị yếu (phát hiện qua `navigator.hardwareConcurrency ≤ 4` hoặc FPS thấp) → tắt sao lấp lánh/sương mù động.
+
+#### 4.6.5 Hình ảnh minh họa
+
+- **Lá bài vai:** minh họa gốc, cùng một phong cách (vẽ tay màu nước/flat có chất liệu), khung viền theo màu phe. MVP dùng biểu tượng SVG + nền màu phe; minh họa hoàn chỉnh trước khi ra Beta (M5).
+- **Avatar:** bộ 24 avatar gốc (dân làng/động vật cách điệu), dạng SVG, hiển thị đẹp ở mọi kích thước.
+- **Nền:** cảnh làng nhiều lớp dạng SVG (bầu trời → đồi xa → mái nhà → hàng rào), có hiệu ứng thị sai nhẹ trên máy tính khi di chuột. Bản đêm và bản ngày dùng cùng hình, chỉ đổi màu.
+- **Biểu tượng giao diện:** Lucide (giấy phép MIT); biểu tượng riêng cho vai/kỹ năng tự vẽ.
+- Định dạng: SVG cho minh họa vector, AVIF/WebP cho ảnh raster, có `srcset` theo mật độ màn hình.
+
+#### 4.6.6 Thư viện thành phần (components)
+
+| Thành phần | Biến thể / trạng thái |
+|---|---|
+| `Button` | primary / secondary / ghost / danger; sm / md / lg; loading, disabled |
+| `PlayerCard` | mặc định, đang chọn, không chọn được (làm mờ), đã chết, mất kết nối, đồng đội Sói (viền đỏ nhỏ), người yêu (tim), đang nói (vòng sáng), giơ tay (✋), đã bỏ phiếu (chấm nhỏ), chủ phòng (vương miện) |
+| `PlayerGrid` / `PlayerCircle` | Lưới (điện thoại) / xếp vòng tròn quanh "đống lửa" (máy tính) |
+| `TimerRing` | Vòng đếm ngược + số; trạng thái bình thường / sắp hết / tạm dừng |
+| `PhaseHeader` | Tên pha, ngày thứ mấy, biểu tượng trăng/mặt trời |
+| `RoleCard` | Úp / ngửa / thu nhỏ; cơ chế giữ để xem |
+| `Sheet` | Responsive: bottom sheet trên điện thoại ↔ panel bên cạnh trên máy tính |
+| `ActionBar` | Thanh hành động cố định dưới đáy (điện thoại) / trong khung giữa (máy tính) |
+| `Modal`, `Toast`, `Tabs`, `Stepper (+/−)`, `Toggle`, `Slider`, `Badge`, `Avatar` | Chuẩn |
+| `BalanceMeter` | Thước cân bằng phe |
+| `VoteResult` | Biểu đồ thanh + danh sách ai bỏ cho ai |
+| `Timeline` | Dòng thời gian ván (màn hình kết thúc) |
+| `RoomCode` + `QR` | Mã phòng lớn, chạm để sao chép |
+| `ConnectionBanner` | "Đang kết nối lại…" |
+
+Mỗi thành phần có story trong **Storybook**, xem được ở cả bộ màu đêm/ngày và nhiều kích thước màn hình.
+
+### 4.7 Bố cục responsive: điện thoại và máy tính
+
+#### 4.7.1 Điểm ngắt (breakpoints)
+
+| Tên | Chiều rộng | Thiết bị điển hình | Bố cục |
+|---|---|---|---|
+| `xs` | < 480px | Điện thoại dọc (thiết kế chuẩn ở 360–430px) | 1 cột, thanh hành động dưới đáy |
+| `sm` | 480–767px | Điện thoại ngang, máy tính bảng nhỏ | 1 cột rộng, lưới 4–5 cột |
+| `md` | 768–1023px | Máy tính bảng | 2 cột (người chơi \| hành động) |
+| `lg` | 1024–1439px | Laptop | 3 cột |
+| `xl` | ≥ 1440px | Màn hình lớn | 3 cột, nội dung tối đa 1440px, căn giữa, nền minh họa tràn viền |
+
+Thiết kế **mobile-first** nhưng mỗi màn hình quan trọng đều có **bản vẽ riêng cho máy tính**.
+
+#### 4.7.2 Điện thoại
+
+```
+┌─────────────────────────────┐
+│ 🌙 Đêm 2        ◯ 0:24      │  ← PhaseHeader + TimerRing (cố định trên cùng)
+├─────────────────────────────┤
+│  Bạn là PHÙ THỦY  (giữ 👁)   │
+│  Đêm nay Sói cắn: AN        │
+│                             │
+│  ┌────┐ ┌────┐ ┌────┐       │
+│  │ An │ │Bình│ │ Chi│       │  ← PlayerGrid 3 cột (4 cột nếu > 12 người)
+│  └────┘ └────┘ └────┘       │
+│  ┌────┐ ┌────┐ ┌────┐       │
+│  │Dũng│ │ Em │ │Gia.│       │
+│  └────┘ └────┘ └────┘       │
+├─────────────────────────────┤
+│ [ 💊 Cứu ]   [ ☠ Đầu độc ]  │  ← ActionBar cố định đáy, trong vùng ngón cái
+│ 📓 Sổ tay        ⚙ Chủ phòng │
+└─────────────────────────────┘
+```
+
+- Các nút quan trọng nằm ở **1/3 dưới màn hình** (vùng ngón cái chạm tới khi cầm một tay).
+- Sổ tay, luật chơi, bảng chủ phòng mở dạng **bottom sheet** kéo lên/xuống.
+- Chọn mục tiêu theo kiểu **chọn → xác nhận** (2 bước) để tránh chạm nhầm.
+- Dùng `100dvh` và `env(safe-area-inset-*)` cho tai thỏ/thanh home; không cuộn ngang; khóa kéo-để-tải-lại (`overscroll-behavior: none`) trong ván; `touch-action: manipulation` để bỏ độ trễ chạm đúp.
+- Rung phản hồi (Vibration API) khi xác nhận, khi chuyển pha (Android; iOS bỏ qua).
+- Giữ màn hình sáng bằng Wake Lock API trong ván.
+- Màn hình ngang: lưới người chơi bên trái, thanh hành động bên phải.
+
+#### 4.7.3 Máy tính
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ MA SÓI · Phòng KH7QX      🌙 Đêm 2 — Phù thủy hành động        ◯ 0:24   ⚙  │
+├───────────────┬──────────────────────────────────────────┬───────────────────┤
+│ NGƯỜI CHƠI    │                                          │ 📓 SỔ TAY         │
+│ ● An          │            (cảnh làng ban đêm)           │ An   [Nghi Sói ▾] │
+│ ● Bình    ✋  │                                          │ Bình [ ?        ▾] │
+│ ● Chi         │        An      Bình      Chi             │ ...               │
+│ 💀 Dũng (BV)  │     Khoa    🔥 đống lửa 🔥    Dũng       │                   │
+│ ● Em          │        Hà      Giang      Em             │ ───────────────── │
+│ ● Giang       │                                          │ DIỄN BIẾN         │
+│ ● Hà          │     Bạn là PHÙ THỦY · Sói cắn: AN        │ Ngày 1: Dũng bị   │
+│ ● Khoa        │     [ 💊 Cứu An ]   [ ☠ Đầu độc… ]       │ treo — Bảo vệ     │
+│               │                                          │ Đêm 1: bình yên   │
+│ Vai trong ván │                                          │                   │
+│ 2 Sói · TT ·  │                                          │                   │
+│ BV · PT · TS  │                                          │                   │
+└───────────────┴──────────────────────────────────────────┴───────────────────┘
+```
+
+- **Bố cục 3 cột:** trái = danh sách người chơi + vai có trong ván; giữa = "sân khấu" (cảnh minh họa, người chơi xếp vòng tròn quanh đống lửa, hành động); phải = sổ tay + diễn biến công khai. Sổ tay **luôn mở** thay vì phải bật sheet.
+- **Bố cục vòng tròn** (`PlayerCircle`) chỉ dùng từ `lg` trở lên; ≤ 20 người vẫn đủ chỗ ở 1280px. Ở chế độ Cùng phòng, vòng tròn theo đúng thứ tự ngồi thật.
+- **Hover:** thẻ nhấc lên, hiện tooltip (tên, trạng thái, nhãn sổ tay của mình). Hover vào tên vai → hiện mô tả vai.
+- **Bàn phím:** `1–9`/mũi tên để chọn người, `Enter` xác nhận, `Esc` hủy/đóng, `N` mở sổ tay, `?` xem phím tắt; giữ `Space` để xem vai. Vòng focus luôn nhìn thấy rõ.
+- **Phòng chờ trên máy tính:** cột trái danh sách người chơi + QR lớn (người khác quét bằng điện thoại để vào phòng), cột phải bảng cấu hình với các tab hiển thị cạnh nhau, thước cân bằng luôn hiển thị.
+- **Màn hình kết thúc trên máy tính:** dòng thời gian dạng ngang theo ngày/đêm, tất cả lá bài vai lật ngửa thành hàng.
+
+#### 4.7.4 Máy tính bảng
+
+- Dọc: như điện thoại nhưng lưới 5 cột, sổ tay là sheet chiếm nửa màn hình.
+- Ngang: 2 cột — người chơi (lưới) bên trái, sân khấu + hành động bên phải; sổ tay là panel trượt từ phải.
+
+#### 4.7.5 Bố cục từng màn hình theo thiết bị
+
+| Màn hình | Điện thoại | Máy tính |
+|---|---|---|
+| Trang chủ | Logo + minh họa trên, 2 nút lớn dưới | Minh họa làng toàn màn hình, khối Tạo/Vào phòng nổi ở giữa, phần giới thiệu luật bên dưới |
+| Phòng chờ | Tab: Người chơi / Cấu hình | 2 cột: Người chơi + QR \| Cấu hình |
+| Xem vai | Lá bài toàn màn hình, giữ để lật | Lá bài lớn ở giữa, mô tả vai bên cạnh, giữ chuột/Space để lật |
+| Đêm | Lưới + thanh hành động | Vòng tròn + hành động ở giữa, sổ tay bên phải |
+| Bình minh | Thẻ người chết lần lượt hiện giữa màn hình | Cảnh mặt trời mọc toàn sân khấu, thẻ người chết hiện trong vòng tròn |
+| Thảo luận | Đồng hồ lớn, hàng đợi giơ tay, nút "Sẵn sàng bỏ phiếu" | Đồng hồ + người đang nói được làm nổi trong vòng tròn, hàng đợi ở cột trái |
+| Bỏ phiếu | Lưới chọn + nút xác nhận | Vòng tròn, đường nối từ người bỏ phiếu đến người bị bỏ (khi công bố) |
+| Kết thúc | Thẻ phe thắng, danh sách cuộn dọc, timeline dọc | Phe thắng to, hàng lá bài, timeline ngang |
+
+### 4.8 Quy trình đảm bảo giao diện đẹp
+
+1. **Thiết kế trước khi code:** vẽ Figma (hoặc công cụ tương đương) cho 6 màn hình chính × 2 thiết bị (điện thoại 390px, máy tính 1440px) × 2 bộ màu (đêm/ngày) trong M0–M1, duyệt xong mới làm M3.
+2. **Storybook** cho mọi thành phần, có nút chuyển đêm/ngày và kích thước màn hình.
+3. **Kiểm thử ảnh chụp (visual regression)** bằng Playwright ở 3 kích thước: 375×812, 768×1024, 1440×900 — CI báo khi giao diện thay đổi ngoài ý muốn.
+4. **Thiết bị thật bắt buộc thử:** iPhone SE (màn nhỏ), một iPhone đời mới, một Android tầm trung (vd. Samsung dòng A), iPad, laptop 1366×768, màn 1920×1080.
+5. **Trình duyệt:** Chrome, Safari iOS, Firefox, Edge, Samsung Internet (2 phiên bản gần nhất).
+6. **Ngân sách hiệu năng:** JS ban đầu < 200KB gzip; LCP < 2s trên 4G điện thoại tầm trung; điểm Lighthouse Mobile ≥ 90 (Performance, Accessibility, Best Practices); hoạt ảnh ổn định 60fps.
+7. **Checklist duyệt thiết kế** cho mỗi màn hình: căn lề thẳng hàng theo lưới 4px · không chữ nào bị cắt/tràn với tên dài 16 ký tự có dấu · trạng thái trống/đang tải/lỗi đều có thiết kế · đẹp ở cả đêm và ngày · đẹp ở 360px và 1920px · dùng được bằng một tay (điện thoại) và bằng bàn phím (máy tính).
+
+### 4.9 Khả năng tiếp cận và đa ngôn ngữ
 
 - Tương phản màu đạt WCAG AA; không truyền đạt thông tin chỉ bằng màu (có icon/chữ kèm theo).
 - Hỗ trợ trình đọc màn hình ở mức cơ bản (aria-label cho lưới người chơi, aria-live cho thông báo pha).
@@ -439,8 +626,11 @@ Phòng chờ → (chủ phòng bấm Bắt đầu) → Xem vai → Vòng chơi �
 | Frontend | **React 18 + Vite** | SPA, realtime, không cần SSR |
 | Định tuyến | React Router | `/`, `/r/:code`, `/rules` |
 | State client | **Zustand** | Gọn, hợp với dữ liệu đẩy từ server |
-| Style | **Tailwind CSS** + CSS variables cho theme ngày/đêm | Nhanh, nhất quán |
-| Animation | Framer Motion | Lật bài, chuyển ngày/đêm |
+| Style | **Tailwind CSS** + CSS variables (design tokens mục 4.6) cho theme ngày/đêm | Nhanh, nhất quán, responsive dễ |
+| Thành phần nền | **Radix UI** primitives (Dialog, Tabs, Toggle, Tooltip…) | Có sẵn hỗ trợ bàn phím/trình đọc màn hình, tự tạo kiểu |
+| Icon | Lucide + icon vai tự vẽ (SVG) | |
+| Thư viện UI | **Storybook** | Phát triển & duyệt thành phần theo đêm/ngày, nhiều kích thước |
+| Animation | Framer Motion | Lật bài, chuyển ngày/đêm, sheet/panel |
 | Âm thanh | Howler.js | Ổn định trên mobile |
 | QR | `qrcode` (tạo), `@zxing/browser` hoặc `BarcodeDetector` (quét) | |
 | Realtime | **Socket.IO** v4 | Tự kết nối lại, ack, room, có adapter Redis để scale |
@@ -1022,7 +1212,9 @@ Bot ngẫu nhiên (`packages/engine/test/bots`) chọn hành động hợp lệ 
 - [ ] Monorepo pnpm, TS config chung, ESLint/Prettier, Vitest, CI cơ bản.
 - [ ] Khung `apps/web` (Vite + React + Tailwind + Router) và `apps/server` (Fastify + Socket.IO).
 - [ ] `packages/shared`: type + schema Zod khởi đầu.
-- [ ] Wireframe giấy/Figma cho các màn hình S1–S13.
+- [ ] Wireframe cho các màn hình S1–S13 ở **cả điện thoại và máy tính**.
+- [ ] Design tokens (màu đêm/ngày, chữ, khoảng cách, bo góc) + cài font tự host.
+- [ ] Thiết kế chi tiết (Figma) 6 màn hình chính × điện thoại/máy tính × đêm/ngày — duyệt trước khi bắt đầu M3.
 - [ ] Viết `docs/LUAT_CHOI.md` bản người chơi.
 
 **Nghiệm thu:** `pnpm dev` chạy được, CI xanh, client kết nối socket thấy "pong".
@@ -1063,7 +1255,10 @@ Bot ngẫu nhiên (`packages/engine/test/bots`) chọn hành động hợp lệ 
 - [ ] Banner mất kết nối / đang kết nối lại.
 - [ ] Chế độ dev: 1 người + bot.
 
-**Nghiệm thu:** E2E Playwright 6 người chơi hết ván trên viewport điện thoại; tất cả màn hình dùng được một tay.
+- [ ] Thư viện thành phần (mục 4.6.6) trong Storybook.
+- [ ] Bố cục điện thoại (lưới + thanh hành động + bottom sheet) và máy tính (3 cột + vòng tròn người chơi + phím tắt) cho mọi màn hình.
+
+**Nghiệm thu:** E2E Playwright 6 người chơi hết ván trên viewport điện thoại **và** máy tính; tất cả màn hình dùng được một tay trên điện thoại và bằng bàn phím trên máy tính; giao diện khớp bản thiết kế đã duyệt.
 
 ### M4 — Hoàn thiện & playtest nội bộ (Tuần 7)
 - [ ] Theme ngày/đêm, hiệu ứng chuyển cảnh, lật bài.
@@ -1073,7 +1268,10 @@ Bot ngẫu nhiên (`packages/engine/test/bots`) chọn hành động hợp lệ 
 - [ ] PWA (thêm vào màn hình chính, toàn màn hình, giữ màn hình sáng bằng Wake Lock API).
 - [ ] 3–5 buổi playtest, sửa lỗi UX, chỉnh thời gian mặc định.
 
-**Nghiệm thu:** Nhóm 8 người chơi 3 ván liên tiếp không cần hướng dẫn thêm, không lỗi chặn.
+- [ ] Minh họa nền làng nhiều lớp, avatar, lá bài vai hoàn chỉnh.
+- [ ] Visual regression (375 / 768 / 1440px), thử trên thiết bị thật theo mục 4.8, Lighthouse Mobile ≥ 90.
+
+**Nghiệm thu:** Nhóm 8 người chơi 3 ván liên tiếp không cần hướng dẫn thêm, không lỗi chặn; người chơi đánh giá giao diện ≥ 4/5 trên cả điện thoại và máy tính.
 
 ### M5 — Ra mắt Beta (Tuần 8)
 - [ ] Dockerfile, deploy production, domain, HTTPS.
@@ -1149,7 +1347,7 @@ Một tính năng được coi là xong khi:
 - [ ] Có đặc tả luật (nếu là luật chơi) trong tài liệu.
 - [ ] Code engine có test unit + kịch bản; không giảm coverage.
 - [ ] Không có thông tin cấm trong PlayerView (test projection xanh).
-- [ ] UI hoạt động trên màn hình 360px rộng và desktop.
+- [ ] UI đẹp và dùng tốt ở 360px, 768px, 1440px và 1920px; đúng cả bộ màu đêm và ngày; qua checklist duyệt thiết kế mục 4.8.
 - [ ] Mọi chuỗi chữ nằm trong file i18n.
 - [ ] Lint + typecheck + test + E2E xanh trên CI.
 - [ ] Đã thử bằng tay ít nhất một ván có tính năng đó.
