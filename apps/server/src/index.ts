@@ -11,6 +11,8 @@ const app = await createApp({
   trustProxy: env.TRUST_PROXY === '1',
   // Bot chỉ để thử một mình: mặc định bật khi phát triển, tắt ở production.
   allowBots: env.ALLOW_BOTS ? env.ALLOW_BOTS === '1' : !isProd,
+  // Chỉ để thử/E2E: nhân mọi thời gian của ván (ví dụ 0.2 = nhanh gấp 5 lần).
+  timeScale: env.TIME_SCALE ? Number(env.TIME_SCALE) : 1,
   logLevel: env.LOG_LEVEL ?? (isProd ? 'info' : 'debug'),
 });
 

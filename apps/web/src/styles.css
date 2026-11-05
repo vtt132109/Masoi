@@ -1,0 +1,304 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design tokens (mục 4.6 của kế hoạch). Màu đổi theo PHA của ván, không theo
+   cài đặt sáng/tối của hệ điều hành.
+--------------------------------------------------------------------------- */
+:root,
+[data-theme='night'] {
+  --bg: #0b1020;
+  --bg-2: #0e1426;
+  --surface: #141b2e;
+  --surface-raised: #1c2540;
+  --border: #2a3556;
+  --text: #ede7d9;
+  --text-muted: #9aa3b8;
+  --accent: #f2d27a;
+  --accent-contrast: #0b1020;
+  --team-village: #4fb58a;
+  --team-wolf: #e05a64;
+  --team-neutral: #a98be0;
+  --lovers: #e98ab4;
+  --dead: #5b6275;
+  --glow: 0 0 28px rgb(242 210 122 / 0.08);
+  --card-shadow: 0 0 0 1px rgb(255 255 255 / 0.02), var(--glow);
+  --scenery: #141b2e;
+  --scenery-2: #10172a;
+  color-scheme: dark;
+}
+
+[data-theme='day'] {
+  --bg: #f6efe3;
+  --bg-2: #fff9f0;
+  --surface: #fff9f0;
+  --surface-raised: #ffffff;
+  --border: #e6d9c3;
+  --text: #2b2118;
+  --text-muted: #7a6a58;
+  --accent: #9c5410;
+  --accent-contrast: #ffffff;
+  --team-village: #1f7350;
+  --team-wolf: #b3323c;
+  --team-neutral: #7a5bb8;
+  --lovers: #a83a68;
+  --dead: #b9ae9e;
+  --glow: 0 6px 18px rgb(122 90 50 / 0.08);
+  --card-shadow: var(--glow);
+  --scenery: #efe3cf;
+  --scenery-2: #e6d6bc;
+  color-scheme: light;
+}
+
+@theme inline {
+  --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-raised: var(--surface-raised);
+  --color-line: var(--border);
+  --color-ink: var(--text);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-onaccent: var(--accent-contrast);
+  --color-village: var(--team-village);
+  --color-wolf: var(--team-wolf);
+  --color-neutral: var(--team-neutral);
+  --color-lovers: var(--lovers);
+  --color-dead: var(--dead);
+  --radius-card: 16px;
+  --radius-sheet: 24px;
+  --shadow-card: var(--card-shadow);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition:
+      background-color 1.2s ease,
+      color 0.6s ease;
+    overscroll-behavior-y: none;
+    touch-action: manipulation;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Thẻ nổi trên nền tranh minh họa */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .safe-bottom {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  .safe-top {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+}
+
+/* ------------------------------------------------------------ Chuyển động */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes pulse-ring {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+@keyframes flame {
+  0%,
+  100% {
+    transform: scaleY(1) rotate(-1deg);
+  }
+  50% {
+    transform: scaleY(1.08) rotate(1.5deg);
+  }
+}
+@keyframes flip-in {
+  from {
+    transform: perspective(900px) rotateY(-90deg);
+    opacity: 0;
+  }
+  to {
+    transform: perspective(900px) rotateY(0);
+    opacity: 1;
+  }
+}
+@keyframes drift {
+  from {
+    transform: translateX(-4%);
+  }
+  to {
+    transform: translateX(4%);
+  }
+}
+
+@layer components {
+  .anim-rise {
+    animation: rise 0.3s ease both;
+  }
+  .anim-pop {
+    animation: pop 0.25s ease both;
+  }
+  .anim-flip {
+    animation: flip-in 0.5s ease both;
+  }
+  .anim-pulse {
+    animation: pulse-ring 0.9s ease-in-out infinite;
+  }
+  .anim-flame {
+    animation: flame 1.6s ease-in-out infinite;
+    transform-origin: 50% 90%;
+  }
+  .star {
+    animation: twinkle 3.5s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Thanh cuộn gọn trong khung */
+@layer components {
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes sheet-left {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.anim-sheet {
+  animation: sheet-up 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+@media (min-width: 1024px) {
+  .anim-sheet {
+    animation-name: sheet-left;
+  }
+}
+.anim-fade {
+  animation: fade 0.2s ease both;
+}
+
+/* Nền: sao + trăng ban đêm, mặt trời ban ngày */
+.scenery-night {
+  transition: opacity 1.2s ease;
+}
+[data-theme='day'] .scenery-night {
+  opacity: 0;
+}
+.scenery-day {
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+[data-theme='day'] .scenery-day {
+  opacity: 1;
+}
+.scenery-parallax {
+  transition: transform 0.4s ease-out;
+}
